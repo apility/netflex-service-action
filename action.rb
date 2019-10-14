@@ -37,7 +37,7 @@ unless options.fetch(:CREATE, false) or options.fetch(:TEARDOWN, false)
   exit
 end
 
-PR_TAG = /refs\/pull\/(\d+)\/merge/.match(options.fetch(:PR_TAG))[1]
+PR_TAG = "pr-" + /refs\/pull\/(\d+)\/merge/.match(options.fetch(:PR_TAG))[1]
 REPOSITORY = options.fetch(:REPOSITORY).downcase
 SITE_NAME = /\/(.*)$/.match(REPOSITORY)[1]
 CLUSTER = options.fetch(:CLUSTER, "Netflex")
@@ -57,6 +57,7 @@ ecsClient = Aws::ECS::Client.new
 
 if(options.fetch(:CREATE, false) || options.fetch(:TEARDOWN, false))
   puts "Fetching services in cluster #{CLUSTER}"
+  puts "-> #service/#{SITE_NAME}-#{PR_TAG}"
   services = ecsClient.list_services(cluster: CLUSTER).to_h[:service_arns]
   puts "Checking if existing service for pull request is present"
   services
