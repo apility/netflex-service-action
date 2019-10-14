@@ -1,0 +1,15 @@
+name: 'Netflex Service Helper'
+description: Helps Netflex users control services through github actions
+inputs:
+  pull_request:
+    description: "Pull request number"
+    required: true
+  base_revision:
+    description: The revision of the action that we want to use as a base to create a new revision
+    required: true
+    default: "1"
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+  args:
+    - '--pull-request="${{ inputs.pull_request }}" --revision="${{ inputs.base_revision}}"'
