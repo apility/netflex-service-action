@@ -127,5 +127,7 @@ if(options.fetch(:CREATE, false))
       }
     }
   )
+  puts "::set-output url=" + "#{PR_TAG}.#{SITE_NAME == "netflexapp" ? "develop" : "#{SITE_NAME}.site" }.netflexapp.com"
 end
+
 puts "::set-output success=true"

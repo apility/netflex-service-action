@@ -15,6 +15,9 @@ inputs:
     description: Either -m or -t for (make or teardown) Make will create/update service, teardown will only delete service
     required: true
     default: "-m"
+  outputs:
+    url: 
+      description: "The expected url where you can find the page"
 runs:
   using: 'docker'
   image: 'Dockerfile'
