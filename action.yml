@@ -8,6 +8,16 @@ inputs:
     description: The revision of the action that we want to use as a base to create a new revision
     required: true
     default: "1"
+  site_name:
+    description: Site alias. Should be "netflexapp" or url friendly site alias of site.
+    required: true
+  repository_url:
+    description: Part of the Docker repository url. Has to be in a format for example "apility/netflexapp" or "netflexsites/grieghallen"
+    required: true
+  mode:
+    description: Either -m or -t for (make or teardown) Make will create/update service, teardown will only delete service
+    required: true
+    default: -m
 runs:
   using: 'docker'
   image: 'Dockerfile'
