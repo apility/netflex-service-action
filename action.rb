@@ -19,13 +19,10 @@ OptionParser.new do |opts|
     options[:REPOSITORY] = name
   end
 
-  opts.on("-nNAME", "--name=NAME", "ECS service name(should be site_alias)") do |name|
-    options[:NAME] = name
-  end
-
   opts.on("-cNAME" "--cluster=NAME", "Optional cluster name") do |name|
     options[:CLUSTER] = name
   end
+
   opts.on("-m", "--pr", "Create (or update) service") do
     options[:CREATE] = true
   end
@@ -36,15 +33,15 @@ OptionParser.new do |opts|
 end.parse!
 
 unless options.fetch(:CREATE, false) or options.fetch(:TEARDOWN, false) 
-  puts "Need either -c or -t"
+  puts "Need either -m or -t"
   exit
 end
 
-PR_TAG = options.fetch(:PR_TAG)
-BASE_TAG = options.fetch(:BASE_TAG)
-SITE_NAME = options.fetch(:NAME)
-REPOSITORY = options.fetch(:REPOSITORY)
+PR_TAG = /refs\/pull\/(\d+)\/merge/.match(options.fetch(:PR_TAG))[1]
+REPOSITORY = options.fetch(:REPOSITORY).downcase
+SITE_NAME = /\/(.*)$/.match(REPOSITORY)[1]
 CLUSTER = options.fetch(:CLUSTER, "Netflex")
+
 class Hash
   def except(*keys)
     dup.except!(*keys)
@@ -75,14 +72,18 @@ if(options.fetch(:CREATE, false) || options.fetch(:TEARDOWN, false))
   end
 end
 
-# Get the base tag version
-puts "Getting base task definition"
-base_defintion = ecsClient.describe_task_definition({
-  task_definition: "arn:aws:ecs:eu-west-1:280793680319:task-definition/#{SITE_NAME}:#{BASE_TAG}"
-}).to_h
 
 
 if(options.fetch(:CREATE, false))
+
+  puts SITE_NAME
+  BASE_TAG = options.fetch(:BASE_TAG)
+  # Get the base tag version
+  puts "Getting base task definition"
+  base_defintion = ecsClient.describe_task_definition({
+    task_definition: "arn:aws:ecs:eu-west-1:280793680319:task-definition/#{SITE_NAME}:#{BASE_TAG}"
+  }).to_h
+
   # update base definition
   puts "Mutating it for current PR"
   task_definition = base_defintion[:task_definition]
