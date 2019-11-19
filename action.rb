@@ -37,7 +37,11 @@ unless options.fetch(:CREATE, false) or options.fetch(:TEARDOWN, false)
   exit
 end
 
-PR_TAG = "pr-" + /refs\/pull\/(\d+)\/merge/.match(options.fetch(:PR_TAG))[1]
+PR_TAG = "pr-" + /refs\/pull\/(\d+)\/merge/.match(options.fetch(:PR_TAG))[1] || netflexsites
+unless PR_TAG
+  puts "Unable to extract pull request number"
+  exit
+end
 REPOSITORY = options.fetch(:REPOSITORY).downcase
 SITE_NAME = /\/(.*)$/.match(REPOSITORY)[1]
 CLUSTER = options.fetch(:CLUSTER, "Netflex")
